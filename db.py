@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, func, Float
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
+import config
+
 engine = create_engine('sqlite:///mydb.db', echo=True)
 session = sessionmaker(bind=engine)()
 
@@ -62,3 +64,7 @@ class Vent(Base):
 
 if __name__ == '__main__':
     Base.metadata.create_all(bind=engine)
+    for name, telegram_id in config.USERS:
+        if not User.check_user(telegram_id):
+            session.add(User(name=name, telegram_id=telegram_id))
+    session.commit()
